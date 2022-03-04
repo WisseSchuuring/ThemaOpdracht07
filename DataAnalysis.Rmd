@@ -87,5 +87,5 @@ final_merge_IRF2KO
 
 # Merge both datasets into a completed dataset
 MyData <- merge(final_merge_IRF2KO, final_merge_parental, by="ID_REF")
-MyData
+MyData[c("ID_REF", "counts_total_KO", "counts_total_p")]
 ```
