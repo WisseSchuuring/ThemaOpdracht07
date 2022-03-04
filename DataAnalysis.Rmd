@@ -74,7 +74,7 @@ names(final_merge_parental)[2] <- c("counts_1_p")
 names(final_merge_parental)[3] <- c("counts_4_p")
 names(final_merge_parental)[4] <- c("counts_5_p")
 final_merge_parental$counts_total_p <- rowSums(final_merge_parental[2:4])
-final_merge_parental
+
 
 # Merge the IRF2KO data
 first_merge_IRF2KO <- merge(s2k, s3k, by="ID_REF")
@@ -83,7 +83,7 @@ names(final_merge_IRF2KO)[2] <- c("counts_1_KO")
 names(final_merge_IRF2KO)[3] <- c("counts_4_KO")
 names(final_merge_IRF2KO)[4] <- c("counts_5_KO")
 final_merge_IRF2KO$counts_total_KO <- rowSums(final_merge_IRF2KO[2:4])
-final_merge_IRF2KO
+
 
 # Merge both datasets into a completed dataset
 MyData <- merge(final_merge_IRF2KO, final_merge_parental, by="ID_REF")
@@ -96,6 +96,26 @@ write.csv(MyData,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
 With the data finally cleaned up, a simple read.table() shall reveal its contents.
 
 ```{r}
-# Reading the MyData.csv file into R as a table.
-read.table(file="Data/Samples/Reformat/MyData.csv", sep=",", header=T)
+# Reading the first five rows of MyData.csv file into R as a table.
+read.table(file="Data/Samples/Reformat/MyData.csv", sep=",", header=T, nrows = 5)
+
+
 ```
+
+The data set contains the identifier for the gene, followed by the amount of times this gene has been expressed within it's respective sample. In addition, there are "total" columns with the sum of these counts for the IRF2 Knockout samples, and the parental samples. These can be used for comparison's sake. All of these values are integers, therefore easy to work with.
+
+```{r}
+# Reading the data set as MyData
+MyData <- read.csv(file = "Data/Samples/Reformat/MyData.csv", header = T)
+
+#Show the amount of rows and columns in MyData
+Dimensions <- dim(MyData)
+cat("The data set contains", Dimensions[1],"rows and",Dimensions[2],"columns.")
+
+
+str(MyData)
+cat("All values within the data set are integers, as expected from a numeric value such as a count.")
+```
+
+
+
