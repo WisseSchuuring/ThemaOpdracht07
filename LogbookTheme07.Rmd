@@ -1,0 +1,85 @@
+---
+title: "Logbook"
+output: html_notebook
+---
+
+week 1:
+
+searched the website
+
+found old dataset
+
+looked at old dataset and associated article
+
+determined core research
+
+
+week 2:
+
+Explored files in dataset
+
+created Project Proposal
+
+Began EDA and sorted files into single large file
+
+
+Upon recieving the data, the samples were split up into six seperated tsv files. first, I had to reformat them into csv. Next, I had to add a column to every csv file, to show which sample it belonged to. Next, I had to place all sample data in a single file. 
+
+```{r}
+# rawdata <- read.csv(file = 'Data/Samples/GSM3733674_sample1.csv', sep = ';', header=T)
+# rawdata$SAMPLE <- 1
+# write.csv(rawdata,file = 'Data/Samples/Reformat/sample1.csv', row.names=F, col.names=F)
+# 
+# rawdata2 <- read.csv(file = 'Data/Samples/GSM3733675_sample2.csv', sep = ';', header=T)
+# rawdata2$SAMPLE <- 2
+# write.csv(rawdata2,file = 'Data/Samples/Reformat/sample2.csv', row.names=F, col.names=F)
+# 
+# rawdata3 <- read.csv(file = 'Data/Samples/GSM3733676_sample3.csv', sep = ';', header=T)
+# rawdata3$SAMPLE <- 3
+# write.csv(rawdata3,file = 'Data/Samples/Reformat/sample3.csv', row.names=F, col.names=F)
+# 
+# rawdata4 <- read.csv(file = 'Data/Samples/GSM3733677_sample4.csv', sep = ';', header=T)
+# rawdata4$SAMPLE <- 4
+# write.csv(rawdata4,file = 'Data/Samples/Reformat/sample4.csv', row.names=F, col.names=F)
+# 
+# rawdata5 <- read.csv(file = 'Data/Samples/GSM3733678_sample5.csv', sep = ';', header=T)
+# rawdata5$SAMPLE <- 5
+# write.csv(rawdata5,file = 'Data/Samples/Reformat/sample5.csv', row.names=F, col.names=F)
+# 
+# rawdata6 <- read.csv(file = 'Data/Samples/GSM3733679_sample6.csv', sep = ';', header=T)
+# rawdata6$SAMPLE <- 6
+# write.csv(rawdata6,file = 'Data/Samples/Reformat/sample6.csv', row.names=F, col.names=F)
+# #
+# 
+# rawdata <- read.csv(file = 'Data/Samples/Reformat/sample1.csv')
+# rawdata$TYPE <- "Parental"
+# write.csv(rawdata,file = 'Data/Samples/Reformat/sample_1.csv', row.names=F)
+# 
+# rawdata2 <- read.csv(file = 'Data/Samples/Reformat/sample2.csv')
+# rawdata2$TYPE <- "IRF2_KO"
+# write.csv(rawdata2,file = 'Data/Samples/Reformat/sample_2.csv', row.names=F)
+# 
+# rawdata3 <- read.csv(file = 'Data/Samples/Reformat/sample3.csv')
+# rawdata3$TYPE <- "IRF2_KO"
+# write.csv(rawdata3,file = 'Data/Samples/Reformat/sample_3.csv', row.names=F)
+# 
+# rawdata4 <- read.csv(file = 'Data/Samples/Reformat/sample4.csv')
+# rawdata4$TYPE <- "Parental"
+# write.csv(rawdata4,file = 'Data/Samples/Reformat/sample_4.csv', row.names=F)
+# 
+# rawdata5 <- read.csv(file = 'Data/Samples/Reformat/sample5.csv')
+# rawdata5$TYPE <- "Parental"
+# write.csv(rawdata5,file = 'Data/Samples/Reformat/sample_5.csv', row.names=F)
+# 
+# rawdata6 <- read.csv(file = 'Data/Samples/Reformat/sample6.csv')
+# rawdata6$TYPE <- "IRF2_KO"
+# write.csv(rawdata6,file = 'Data/Samples/Reformat/sample_6.csv', row.names=F)
+
+AllData <- read.csv(file="Data/Samples/Reformat/AllSamples.csv", header =T)
+MyData <- AllData[c("ID_REF","count","SAMPLE")]
+MyData
+
+```
+
+Here I attempted to add wether they were parental or IRF2KO, however afterwards I decided placing each in the same file, with the type noted in the column name would be more efficient. 
+
