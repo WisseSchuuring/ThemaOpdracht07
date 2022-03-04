@@ -19,14 +19,20 @@ library(xtable)
 
 ```{r}
 #reading in the parental sample files.
-sample_1_p <- read.csv(file = "Data/Samples/Reformat/GSM3733674_1_p.csv", header=T)
-sample_4_p <- read.csv(file = "Data/Samples/Reformat/GSM3733677_4_p.csv", header=T)
-sample_5_p <- read.csv(file = "Data/Samples/Reformat/GSM3733678_5_p.csv", header=T)
+sample_1_p <- read.csv(file = "Data/Samples/Reformat/GSM3733674_1_p.csv",
+                       header=T)
+sample_4_p <- read.csv(file = "Data/Samples/Reformat/GSM3733677_4_p.csv",
+                       header=T)
+sample_5_p <- read.csv(file = "Data/Samples/Reformat/GSM3733678_5_p.csv",
+                       header=T)
 
 #reading in the IRF2 knockout files.
-sample_2_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733675_2_KO.csv", header=T)
-sample_3_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733676_3_KO.csv", header=T)
-sample_6_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733679_6_KO.csv", header=T)
+sample_2_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733675_2_KO.csv",
+                        header=T)
+sample_3_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733676_3_KO.csv",
+                        header=T)
+sample_6_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733679_6_KO.csv",
+                        header=T)
 
 #removing the "values" value in both parental and knockout files.
 s1p <- sample_1_p[c("ID_REF", "count")]
@@ -40,31 +46,6 @@ s6k <- sample_6_KO[c("ID_REF", "count")]
 
 Read in the files and removed the unnecessary value value, for the only ones of interest are the id and the counts value.
 
-```{r}
-
-# first_merge <- merge(s1p, s2k, by="ID_REF")
-# names(first_merge)[2] <- "counts_1_p"
-# names(first_merge)[3] <- "counts_2_KO"
-# 
-# second_merge <- merge(first_merge, s4p, by="ID_REF")
-# names(second_merge)[4] <- "counts_4_p"
-# 
-# third_merge <- merge(second_merge, s3k, by="ID_REF")
-# names(third_merge)[5] <- "counts_3_KO"
-# 
-# fourth_merge <- merge(third_merge, s5p, by="ID_REF")
-# names(fourth_merge)[6] <- "counts_5_p"
-# 
-# final_merge <- merge(fourth_merge, s6k, by="ID_REF")
-# names(final_merge)[7] <- "counts_6_KO"
-
-#final_merge
-
-#write.csv(final_merge,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
-
-```
-
-This merges all sample files together one by one, however for comparisons sake I shall first create two separate files with a sum of the counts for the parental samples and IRF2KO samples respectively. This should make comparing the counts later easier. 
 
 ```{r}
 # Merge the parental data
@@ -79,14 +60,14 @@ final_merge_parental$counts_total_p <- rowSums(final_merge_parental[2:4])
 # Merge the IRF2KO data
 first_merge_IRF2KO <- merge(s2k, s3k, by="ID_REF")
 final_merge_IRF2KO <- merge(first_merge_parental, s6k, by="ID_REF")
-names(final_merge_IRF2KO)[2] <- c("counts_1_KO")
-names(final_merge_IRF2KO)[3] <- c("counts_4_KO")
-names(final_merge_IRF2KO)[4] <- c("counts_5_KO")
+names(final_merge_IRF2KO)[2] <- c("counts_2_KO")
+names(final_merge_IRF2KO)[3] <- c("counts_3_KO")
+names(final_merge_IRF2KO)[4] <- c("counts_6_KO")
 final_merge_IRF2KO$counts_total_KO <- rowSums(final_merge_IRF2KO[2:4])
 
 
 # Merge both datasets into a completed dataset
-MyData <- merge(final_merge_IRF2KO, final_merge_parental, by="ID_REF")
+MyData <- merge(final_merge_parental, final_merge_IRF2KO, by="ID_REF")
 
 # Write the merged dataset to a seperate file " MyData.csv".
 write.csv(MyData,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
@@ -97,7 +78,8 @@ With the data finally cleaned up, a simple read.table() shall reveal its content
 
 ```{r}
 # Reading the first five rows of MyData.csv file into R as a table.
-read.table(file="Data/Samples/Reformat/MyData.csv", sep=",", header=T, nrows = 5)
+read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
+           header=T, nrows = 5)
 
 
 ```
@@ -110,12 +92,22 @@ MyData <- read.csv(file = "Data/Samples/Reformat/MyData.csv", header = T)
 
 #Show the amount of rows and columns in MyData
 Dimensions <- dim(MyData)
-cat("The data set contains", Dimensions[1],"rows and",Dimensions[2],"columns.")
+cat("The data set contains", Dimensions[1],
+    "rows and",Dimensions[2],"columns.\n")
 
-
+#Show the structure of the data set.
 str(MyData)
-cat("All values within the data set are integers, as expected from a numeric value such as a count.")
+cat("All values within the data set are integers,
+    as expected from a numeric value such as a count.\n")
 ```
 
-
+```{r}
+# create R objects to store classification
+counts_p <- select(MyData,c(2:4))
+counts_KO <- select(MyData,c(6:8))
+counts_total <- select(MyData,c(5,9))
+compare_1_2 <- select(MyData,c(2,6))
+compare_4_3 <- select(MyData,c(3,7))
+compare_5_6 <-select(MyData,c(4,8))
+```
 
