@@ -22,6 +22,8 @@ created Project Proposal
 
 Began EDA and sorted files into single large file
 
+Created Github and pushed he files upon it. 
+
 
 Upon recieving the data, the samples were split up into six seperated tsv files. first, I had to reformat them into csv. Next, I had to add a column to every csv file, to show which sample it belonged to. Next, I had to place all sample data in a single file. 
 
