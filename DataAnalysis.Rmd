@@ -2,7 +2,7 @@
 title: "DataAnalysis"
 author: "Wisse Schuuring"
 date: "2/15/2022"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
@@ -14,21 +14,21 @@ library(xtable)
 
 ```
 
-## R Markdown
-
-
+# Exploratory Data Analysis
 
 
 ```{r}
-
+#reading in the parental sample files.
 sample_1_p <- read.csv(file = "Data/Samples/Reformat/GSM3733674_1_p.csv", header=T)
 sample_4_p <- read.csv(file = "Data/Samples/Reformat/GSM3733677_4_p.csv", header=T)
 sample_5_p <- read.csv(file = "Data/Samples/Reformat/GSM3733678_5_p.csv", header=T)
 
+#reading in the IRF2 knockout files.
 sample_2_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733675_2_KO.csv", header=T)
 sample_3_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733676_3_KO.csv", header=T)
 sample_6_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733679_6_KO.csv", header=T)
 
+#removing the "values" value in both parental and knockout files.
 s1p <- sample_1_p[c("ID_REF", "count")]
 s4p <- sample_4_p[c("ID_REF", "count")]
 s5p <- sample_5_p[c("ID_REF", "count")]
@@ -87,5 +87,15 @@ final_merge_IRF2KO
 
 # Merge both datasets into a completed dataset
 MyData <- merge(final_merge_IRF2KO, final_merge_parental, by="ID_REF")
-MyData[c("ID_REF", "counts_total_KO", "counts_total_p")]
+
+# Write the merged dataset to a seperate file " MyData.csv".
+write.csv(MyData,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
+
+```
+
+With the data finally cleaned up, a simple read.table() shall reveal its contents.
+
+```{r}
+# Reading the MyData.csv file into R as a table.
+read.table(file="Data/Samples/Reformat/MyData.csv", sep=",", header=T)
 ```
