@@ -7,25 +7,22 @@ week 1:
 
 searched the website
 
-found old dataset
+found old data set
 
-looked at old dataset and associated article
+looked at old data set and associated article
 
 determined core research
 
 
 week 2:
 
-Explored files in dataset
+Explored files in data set
 
 created Project Proposal
 
 Began EDA and sorted files into single large file
 
-Created Github and pushed he files upon it. 
-
-
-Upon recieving the data, the samples were split up into six seperated tsv files. first, I had to reformat them into csv. Next, I had to add a column to every csv file, to show which sample it belonged to. Next, I had to place all sample data in a single file. 
+Upon receiving the data, the samples were split up into six seperated tsv files. first, I had to reformat them into csv. Next, I had to add a column to every csv file, to show which sample it belonged to. Next, I had to place all sample data in a single file. 
 
 ```{r}
 # rawdata <- read.csv(file = 'Data/Samples/GSM3733674_sample1.csv', sep = ';', header=T)
@@ -77,11 +74,43 @@ Upon recieving the data, the samples were split up into six seperated tsv files.
 # rawdata6$TYPE <- "IRF2_KO"
 # write.csv(rawdata6,file = 'Data/Samples/Reformat/sample_6.csv', row.names=F)
 
-AllData <- read.csv(file="Data/Samples/Reformat/AllSamples.csv", header =T)
-MyData <- AllData[c("ID_REF","count","SAMPLE")]
-MyData
+# AllData <- read.csv(file="Data/Samples/Reformat/AllSamples.csv", header =T)
+# MyData <- AllData[c("ID_REF","count","SAMPLE")]
+# MyData
 
 ```
 
-Here I attempted to add wether they were parental or IRF2KO, however afterwards I decided placing each in the same file, with the type noted in the column name would be more efficient. 
+Here I attempted to add whether they were parental or IRF2KO, however afterwards I decided placing each in the same file, with the type noted in the column name would be more efficient.
+
+```{r}
+
+# first_merge <- merge(s1p, s2k, by="ID_REF")
+# names(first_merge)[2] <- "counts_1_p"
+# names(first_merge)[3] <- "counts_2_KO"
+# 
+# second_merge <- merge(first_merge, s4p, by="ID_REF")
+# names(second_merge)[4] <- "counts_4_p"
+# 
+# third_merge <- merge(second_merge, s3k, by="ID_REF")
+# names(third_merge)[5] <- "counts_3_KO"
+# 
+# fourth_merge <- merge(third_merge, s5p, by="ID_REF")
+# names(fourth_merge)[6] <- "counts_5_p"
+# 
+# final_merge <- merge(fourth_merge, s6k, by="ID_REF")
+# names(final_merge)[7] <- "counts_6_KO"
+
+#final_merge
+
+#write.csv(final_merge,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
+
+```
+
+This merges all sample files together one by one, however for comparisons sake I shall first create two separate files with a sum of the counts for the parental samples and IRF2KO samples respectively. This should make comparing the counts later easier. 
+
+Created Github and pushed the files upon it
+
+Data structure checked for data type using dim() and str()
+
+created R objects from the data set for use in classification
 
