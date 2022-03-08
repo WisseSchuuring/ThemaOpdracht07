@@ -19,22 +19,23 @@ library(xtable)
 
 ```{r}
 #reading in the parental sample files.
-sample_1_p <- read.csv(file = "Data/Samples/Reformat/GSM3733674_1_p.csv",
-                       header=T)
-sample_4_p <- read.csv(file = "Data/Samples/Reformat/GSM3733677_4_p.csv",
-                       header=T)
-sample_5_p <- read.csv(file = "Data/Samples/Reformat/GSM3733678_5_p.csv",
-                       header=T)
+sample_1_p <- read.csv(file = "Data/SamplesTSV/GSM3733674_sample1.tsv",
+                       sep = "\t", header=T, skip = 3)
+sample_4_p <- read.csv(file = "Data/SamplesTSV/GSM3733677_sample4.tsv",
+                       sep = "\t", header=T, skip = 3)
+sample_5_p <- read.csv(file = "Data/SamplesTSV/GSM3733678_sample5.tsv",
+                       sep = "\t", header=T, skip = 3)
 
 #reading in the IRF2 knockout files.
-sample_2_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733675_2_KO.csv",
-                        header=T)
-sample_3_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733676_3_KO.csv",
-                        header=T)
-sample_6_KO <- read.csv(file = "Data/Samples/Reformat/GSM3733679_6_KO.csv",
-                        header=T)
+sample_2_KO <- read.csv(file = "Data/SamplesTSV/GSM3733675_sample2.tsv",
+                        sep = "\t", header=T, skip = 3)
+sample_3_KO <- read.csv(file = "Data/SamplesTSV/GSM3733676_sample3.tsv",
+                        sep = "\t", header=T, skip = 3)
+sample_6_KO <- read.csv(file = "Data/SamplesTSV/GSM3733679_sample6.tsv",
+                        sep = "\t", header=T, skip = 3)
 
-#removing the "values" value in both parental and knockout files.
+
+#removing the "values" column in both parental and knockout files.
 s1p <- sample_1_p[c("ID_REF", "count")]
 s4p <- sample_4_p[c("ID_REF", "count")]
 s5p <- sample_5_p[c("ID_REF", "count")]
@@ -80,8 +81,6 @@ With the data finally cleaned up, a simple read.table() shall reveal its content
 # Reading the first five rows of MyData.csv file into R as a table.
 read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
            header=T, nrows = 5)
-
-
 ```
 
 The data set contains the identifier for the gene, followed by the amount of times this gene has been expressed within it's respective sample. In addition, there are "total" columns with the sum of these counts for the IRF2 Knockout samples, and the parental samples. These can be used for comparison's sake. All of these values are integers, therefore easy to work with.
@@ -109,6 +108,7 @@ counts_total <- c(5,9)
 compare_1_2 <- c(2,6)
 compare_4_3 <- c(3,7)
 compare_5_6 <- c(4,8)
+ref_out <- MyData[c(2:4,6:8)]
 
 ```
 
@@ -122,10 +122,15 @@ I need to compare the counts on the Y values from both count_total_p and count_t
 #   geom_jitter()
 # count_compare
 #ggplot(counts_total, aes(x=counts_total_KO, y=ID_REF))
-boxplot(MyData$counts_total_p ~ MyData$ID_REF)
-boxplot(MyData$counts_total_KO ~ MyData$ID_REF)
+summary(MyData)
+boxplot(ref_out, outline = FALSE)
+boxplot(log2(ref_out + 1), outline = FALSE)
+boxplot(log2(ref_out + 1), data=MyData, main="Gene expression between Parental and IRF2 KO",
+   xlab="Gene Samples", ylab="Log of Gene expressions", col = c("dark green","dark green","dark green","light green","light green","light green"))
+#boxplot(MyData$counts_total_KO ~ MyData$ID_REF)
 
 ```
+
 ```{r}
 summary(MyData)
 ```
