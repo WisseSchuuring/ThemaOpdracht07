@@ -103,14 +103,13 @@ cat("All values within the data set are integers,
 
 ```{r}
 # create R objects to store classification
-counts_p <- select(MyData,c(1,2:4))
-counts_KO <- select(MyData,c(1,6:8))
-counts_total <- select(MyData,c(1,5,9))
-compare_1_2 <- select(MyData,c(1,2,6))
-compare_4_3 <- select(MyData,c(1,3,7))
-compare_5_6 <-select(MyData,c(1,4,8))
+counts_p <- 2:4
+counts_KO <- 6:8
+counts_total <- c(5,9)
+compare_1_2 <- c(2,6)
+compare_4_3 <- c(3,7)
+compare_5_6 <- c(4,8)
 
-counts_total
 ```
 
 Six R objects are created. The counts objects to keep track of individual counts, as well as a comparison between both totals. The compare objects compare one specific parental expression count value with one specific IRF2 Knockout expression count value. 
@@ -122,6 +121,14 @@ I need to compare the counts on the Y values from both count_total_p and count_t
 # count_compare <- ggplot(counts_total, aes(x=counts_total_p, y=counts_total_KO)) + geom_point() +  scale_x_continuous() +
 #   geom_jitter()
 # count_compare
-ggplot(counts_total, aes(x=counts_total_KO, y=ID_REF))
+#ggplot(counts_total, aes(x=counts_total_KO, y=ID_REF))
+boxplot(MyData$counts_total_p ~ MyData$ID_REF)
+boxplot(MyData$counts_total_KO ~ MyData$ID_REF)
 
 ```
+```{r}
+summary(MyData)
+```
+
+
+
