@@ -134,7 +134,7 @@ boxplot(log2(ref_out + 1),
         col = c("orange","orange",
                 "orange","dark Blue",
                 "dark Blue","dark Blue"),
-        las=3, par(cex.axis=0.46),
+        las=2, par(cex.axis=0.46),
         names=c("Parent 1","Parent 2",
                 "Parent 3","Knockout 1",
                 "Knockout 2", "Knockout 3"))
@@ -163,6 +163,18 @@ abline(v=-1.5, lwd=1, col='red', lty=2)
 ```
 Considering there are barely to no shifts between the peaks of the different samples, it can be concluded that the data is of high quality.
 
+## Multi Dimensional Scaling (MDS)
 
+```{r}
+barplot(colSums(ref_out) / 1e6, las = 2,
+        col=rep(myColors, each=3),
+        xlab = "Gene Samples",
+        ylab = "Sequencing Depth (in millions)",
+        names=c("Parent 1","Parent 2","Parent 3",
+                "Knockout 1","Knockout 2", "Knockout 3"),
+        cex.names=0.45)
 
+legend('topright', names(ref_out), fill= rep(c("Orange","Dark Blue"), each=3),
+       col=rep(myColors, each=3))
+```
 
