@@ -114,3 +114,45 @@ Data structure checked for data type using dim() and str()
 
 created R objects from the data set for use in classification
 
+
+week 3:
+
+Cleaned up the reading in section so I can now read the raw tsv files instead of edited csv files.
+
+Fixed the R objects from their previous wrong assignment
+
+Created a boxplot using previously mentioned R objects
+
+Created a density plot using previously mentioned R objects
+
+Created a barplot displaying MultiDimensional Scaling
+
+Spent too much time adding legends to my plots.
+
+
+```{r}
+# boxplot(counts_p)
+# boxplot(counts_KO)
+# count_compare <- ggplot(counts_total, aes(x=counts_total_p, y=counts_total_KO)) + geom_point() +  scale_x_continuous() +
+#   geom_jitter()
+# count_compare
+#ggplot(counts_total, aes(x=counts_total_KO, y=ID_REF))
+#boxplot(MyData$counts_total_KO ~ MyData$ID_REF)
+
+summary(MyData)
+# boxplot(ref_out, outline = FALSE)
+# boxplot(log2(ref_out + 1), outline = FALSE)
+
+boxplot(log2(ref_out + 1),
+        data=MyData, main="Gene expression between Parental and IRF2 KO",
+        xlab="Gene Samples",
+        ylab="Log of Gene expressions",
+        col = c("dark green","dark green",
+                "dark green","light green",
+                "light green","light green"),
+        las=3, par(cex.axis=0.46),
+        names=c("Parent 1","Parent 2",
+                "Parent 3","Knockout 1",
+                "Knockout 2", "Knockout 3"))
+
+```
