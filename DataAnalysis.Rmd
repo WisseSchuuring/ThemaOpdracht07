@@ -110,30 +110,47 @@ compare_4_3 <- c(3,7)
 compare_5_6 <- c(4,8)
 ref_out <- MyData[c(2:4,6:8)]
 
+ref_out
+
 ```
 
 Six R objects are created. The counts objects to keep track of individual counts, as well as a comparison between both totals. The compare objects compare one specific parental expression count value with one specific IRF2 Knockout expression count value. 
 
 I need to compare the counts on the Y values from both count_total_p and count_total_KO to the genes on the X bar. 
 ```{r}
-# boxplot(counts_p)
-# boxplot(counts_KO)
-# count_compare <- ggplot(counts_total, aes(x=counts_total_p, y=counts_total_KO)) + geom_point() +  scale_x_continuous() +
-#   geom_jitter()
-# count_compare
-#ggplot(counts_total, aes(x=counts_total_KO, y=ID_REF))
+# Summarise the Data
 summary(MyData)
-boxplot(ref_out, outline = FALSE)
-boxplot(log2(ref_out + 1), outline = FALSE)
-boxplot(log2(ref_out + 1), data=MyData, main="Gene expression between Parental and IRF2 KO",
-   xlab="Gene Samples", ylab="Log of Gene expressions", col = c("dark green","dark green","dark green","light green","light green","light green"))
-#boxplot(MyData$counts_total_KO ~ MyData$ID_REF)
+
+# Create a boxplot displaying the logged data of the six samples.
+boxplot(log2(ref_out + 1),
+        data=MyData, main="Gene expression between Parental and IRF2 KO",
+        xlab="Gene Samples",
+        ylab="Log of Gene expressions",
+        col = c("dark green","dark green",
+                "dark green","light green",
+                "light green","light green"),
+        las=3, par(cex.axis=0.46),
+        names=c("Parent 1","Parent 2",
+                "Parent 3","Knockout 1",
+                "Knockout 2", "Knockout 3"))
 
 ```
-
 ```{r}
-summary(MyData)
+library(affy)
+
+library(scales)
+myColors <- c("Orange","dark Blue")
+
+plotDensity(log2(ref_out + 0.1), col=rep(myColors, each=3),
+            lty=c(1:ncol(ref_out)), xlab='Log2(count)',
+            main='Expression Distribution')
+
+legend('topright', names(ref_out), lty=c(1:ncol(ref_out)),
+       col=rep(myColors, each=3))
+abline(v=-1.5, lwd=1, col='red', lty=2)
 ```
+
+
 
 
 
