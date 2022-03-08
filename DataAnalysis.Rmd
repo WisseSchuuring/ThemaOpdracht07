@@ -77,11 +77,15 @@ write.csv(MyData,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
 
 With the data finally cleaned up, a simple read.table() shall reveal its contents.
 
+## Reading in the Data
+
 ```{r}
 # Reading the first five rows of MyData.csv file into R as a table.
 read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
            header=T, nrows = 5)
 ```
+
+## Data Dimensions
 
 The data set contains the identifier for the gene, followed by the amount of times this gene has been expressed within it's respective sample. In addition, there are "total" columns with the sum of these counts for the IRF2 Knockout samples, and the parental samples. These can be used for comparison's sake. All of these values are integers, therefore easy to work with.
 
@@ -100,6 +104,8 @@ cat("All values within the data set are integers,
     as expected from a numeric value such as a count.\n")
 ```
 
+## Creating R Objects
+
 ```{r}
 # create R objects to store classification
 counts_p <- 2:4
@@ -110,13 +116,12 @@ compare_4_3 <- c(3,7)
 compare_5_6 <- c(4,8)
 ref_out <- MyData[c(2:4,6:8)]
 
-ref_out
-
 ```
 
 Six R objects are created. The counts objects to keep track of individual counts, as well as a comparison between both totals. The compare objects compare one specific parental expression count value with one specific IRF2 Knockout expression count value. 
 
-I need to compare the counts on the Y values from both count_total_p and count_total_KO to the genes on the X bar. 
+## Summarising and Boxplot
+
 ```{r}
 # Summarise the Data
 summary(MyData)
@@ -126,30 +131,37 @@ boxplot(log2(ref_out + 1),
         data=MyData, main="Gene expression between Parental and IRF2 KO",
         xlab="Gene Samples",
         ylab="Log of Gene expressions",
-        col = c("dark green","dark green",
-                "dark green","light green",
-                "light green","light green"),
+        col = c("orange","orange",
+                "orange","dark Blue",
+                "dark Blue","dark Blue"),
         las=3, par(cex.axis=0.46),
         names=c("Parent 1","Parent 2",
                 "Parent 3","Knockout 1",
                 "Knockout 2", "Knockout 3"))
-
 ```
+
+A summary shows that most data points do indeed equal zero. The following boxplot reveals however that the data samples overall are very balanced, as they should be, and can all be used for the research. 
+
+## Density Plot
+
 ```{r}
 library(affy)
 
+## Create a vector of 2 colors to use.
 library(scales)
 myColors <- c("Orange","dark Blue")
 
+## Plot the log2-transformed data with a 0.1 pseudocount
 plotDensity(log2(ref_out + 0.1), col=rep(myColors, each=3),
             lty=c(1:ncol(ref_out)), xlab='Log2(count)',
             main='Expression Distribution')
 
+## Add a legend and vertical line
 legend('topright', names(ref_out), lty=c(1:ncol(ref_out)),
        col=rep(myColors, each=3))
 abline(v=-1.5, lwd=1, col='red', lty=2)
 ```
-
+Considering there are barely to no shifts between the peaks of the different samples, it can be concluded that the data is of high quality.
 
 
 
