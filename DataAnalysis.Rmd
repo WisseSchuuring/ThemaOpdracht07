@@ -145,6 +145,7 @@ A summary shows that most data points do indeed equal zero. The following boxplo
 ## Density Plot
 
 ```{r}
+# Import affy to create a Density Plot
 library(affy)
 
 ## Create a vector of 2 colors to use.
@@ -166,6 +167,7 @@ Considering there are barely to no shifts between the peaks of the different sam
 ## Multi Dimensional Scaling (MDS)
 
 ```{r}
+## Created a boxplot using MDS
 barplot(colSums(ref_out) / 1e6, las = 2,
         col=rep(myColors, each=3),
         xlab = "Gene Samples",
@@ -173,8 +175,5 @@ barplot(colSums(ref_out) / 1e6, las = 2,
         names=c("Parent 1","Parent 2","Parent 3",
                 "Knockout 1","Knockout 2", "Knockout 3"),
         cex.names=0.45)
-
-legend('topright', names(ref_out), fill= rep(c("Orange","Dark Blue"), each=3),
-       col=rep(myColors, each=3))
 ```
 
