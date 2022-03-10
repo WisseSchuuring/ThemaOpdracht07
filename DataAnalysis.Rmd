@@ -10,7 +10,10 @@ output: pdf_document
 library(ggplot2)
 library(dplyr)
 library(xtable)
-
+library(PoiClaClu)
+library(affy)
+library(scales)
+library(pheatmap)
 
 ```
 
@@ -145,11 +148,7 @@ A summary shows that most data points do indeed equal zero. The following boxplo
 ## Density Plot
 
 ```{r}
-# Import affy to create a Density Plot
-library(affy)
-
 ## Create a vector of 2 colors to use.
-library(scales)
 myColors <- c("Orange","dark Blue")
 
 ## Plot the log2-transformed data with a 0.1 pseudocount
@@ -180,8 +179,6 @@ barplot(colSums(ref_out) / 1e6, las = 2,
 ```{r}
 library('DESeq2')
 
-ref_out
-
 # DESeq2 will construct a SummarizedExperiment object and combine this 
 # into a 'DESeqDataSet' object. The 'design' argument usually indicates the 
 # experimental design using the condition(s) names as a 'factor', for now we use just '~ 1'
@@ -206,8 +203,6 @@ sampledists <- dist( t( rld ))
 ## Heatmap
 
 ```{r}
-# We use the 'pheatmap' library (install with install.packages('pheatmap'))
-library(pheatmap)
 
 # Convert the 'dist' object into a matrix for creating a heatmap
 (sampleDistMatrix <- as.matrix(sampledists))
@@ -226,10 +221,9 @@ pheatmap(sampleDistMatrix, show_colnames = FALSE,
          clustering_distance_cols = sampledists,
          main = "Euclidean Sample Distances")
 ```
-## Multi-Dimensional Scaling (MDS)
+## Multi Dimensional Scaling (MDS)
 
 ```{r}
-library('PoiClaClu')
 # Use the raw (not r-log transformed!) counts
 dds <- assay(ddsMat)
 poisd <- PoissonDistance( t(dds) )
@@ -262,11 +256,11 @@ There is a clear poisson distance between the parental and the IRF2 KO gene samp
 # The 'ddsMat' object is the 'DESeqDataSet' created in chapter 3; EDA.
 # NOTE: only for count data and observe the pseudocount of 1 (remove if data does not contain 0-values)
 counts.fpm <- log2( fpm(ddsMat, robust = TRUE) + 1 )
-View(counts.fpm)
+
 ```
 
 "Differential expression analysis was performed using the voom/limma R package
 (38). Genes were considered to be differentially expressed if the log2
-of the fold change was >1 or <−1 and the adjusted P value was <0.05"
+of the fold change was >1 or < 1 and the adjusted P value was <0.05"
 
 
