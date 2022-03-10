@@ -60,7 +60,7 @@ final_merge_parental$counts_total_p <- rowSums(final_merge_parental[2:4])
 
 # Merge the IRF2KO data
 first_merge_IRF2KO <- merge(s2k, s3k, by="ID_REF")
-final_merge_IRF2KO <- merge(first_merge_parental, s6k, by="ID_REF")
+final_merge_IRF2KO <- merge(first_merge_IRF2KO, s6k, by="ID_REF")
 names(final_merge_IRF2KO)[2] <- c("counts_2_KO")
 names(final_merge_IRF2KO)[3] <- c("counts_3_KO")
 names(final_merge_IRF2KO)[4] <- c("counts_6_KO")
@@ -180,6 +180,8 @@ barplot(colSums(ref_out) / 1e6, las = 2,
 ```{r}
 library('DESeq2')
 
+ref_out
+
 # DESeq2 will construct a SummarizedExperiment object and combine this 
 # into a 'DESeqDataSet' object. The 'design' argument usually indicates the 
 # experimental design using the condition(s) names as a 'factor', for now we use just '~ 1'
@@ -251,9 +253,20 @@ ggplot(mdsPoisData, aes(x_coord, y_coord, color = groups, label = coldata)) +
   labs(x = "Poisson Distance", y = "Poisson Distance") +
   theme_bw()
 ```
-Samples 1 & 2 as well as 3 & 4 are not that different, however there seems to be a large difference between the parental sample 5 and IRF2 KO sample 6.
+There is a clear poisson distance between the parental and the IRF2 KO gene samples. As this data set only contains 3 samples of each group, as well as the fact the data itself does not contain any missing values, it can be fully utilized for research. 
+
+# Discovering Differentialy Expressed Genes
 
 ```{r}
-MyData
+# Perform FPM normalization using DESeq2 'fpm' and perform log2 transformation
+# The 'ddsMat' object is the 'DESeqDataSet' created in chapter 3; EDA.
+# NOTE: only for count data and observe the pseudocount of 1 (remove if data does not contain 0-values)
+counts.fpm <- log2( fpm(ddsMat, robust = TRUE) + 1 )
+View(counts.fpm)
 ```
-As this dataset only contains 3 samples of each group, as well as the fact the data itself does not contain any missing values, it can be fuly utilised for research. 
+
+"Differential expression analysis was performed using the voom/limma R package
+(38). Genes were considered to be differentially expressed if the log2
+of the fold change was >1 or <−1 and the adjusted P value was <0.05"
+
+
