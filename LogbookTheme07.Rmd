@@ -137,6 +137,8 @@ Performed Multi-Dimensional Scaling
 
 fixed the dataset, made a mistake in my merging. 
 
+moved libraries to the correct R chunk and removed unrecognised Unicode characters for pdf Knit.
+
 ```{r}
 # boxplot(counts_p)
 # boxplot(counts_KO)
