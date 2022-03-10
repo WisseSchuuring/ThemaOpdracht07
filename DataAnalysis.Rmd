@@ -177,3 +177,22 @@ barplot(colSums(ref_out) / 1e6, las = 2,
         cex.names=0.45)
 ```
 
+```{r}
+library('DESeq2')
+
+# DESeq2 will construct a SummarizedExperiment object and combine this 
+# into a 'DESeqDataSet' object. The 'design' argument usually indicates the 
+# experimental design using the condition(s) names as a 'factor', for now we use just '~ 1'
+(ddsMat <- DESeqDataSetFromMatrix(countData = ref_out,
+                                  colData = data.frame(samples = names(ref_out)),
+                                  design = ~ 1))
+```
+```{r}
+# Perform normalization
+rld.dds <- vst(ddsMat)
+# 'Extract' normalized values
+rld <- assay(rld.dds)
+
+```
+
+
