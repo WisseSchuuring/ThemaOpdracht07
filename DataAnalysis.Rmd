@@ -164,7 +164,7 @@ abline(v=-1.5, lwd=1, col='red', lty=2)
 ```
 Considering there are barely to no shifts between the peaks of the different samples, it can be concluded that the data is of high quality.
 
-## Multi Dimensional Scaling (MDS)
+## Normalisation
 
 ```{r}
 ## Created a boxplot using MDS
@@ -192,7 +192,68 @@ library('DESeq2')
 rld.dds <- vst(ddsMat)
 # 'Extract' normalized values
 rld <- assay(rld.dds)
-
 ```
 
+## Distance Calculation
 
+```{r}
+# Calculate basic distance metric (using euclidean distance, see '?dist')
+sampledists <- dist( t( rld ))
+```
+
+## Heatmap
+
+```{r}
+# We use the 'pheatmap' library (install with install.packages('pheatmap'))
+library(pheatmap)
+
+# Convert the 'dist' object into a matrix for creating a heatmap
+(sampleDistMatrix <- as.matrix(sampledists))
+
+# The annotation is an extra layer that will be plotted above the heatmap columns
+# indicating the cell type
+annotation <- data.frame(Cell = factor(rep(1:2, each = 3),
+                                          labels = c("Parental", "IRF2 KO")))
+
+# Set the rownames of the annotation dataframe to the sample names (required)
+rownames(annotation) <- names(ref_out)
+
+pheatmap(sampleDistMatrix, show_colnames = FALSE,
+         annotation_col = annotation,
+         clustering_distance_rows = sampledists,
+         clustering_distance_cols = sampledists,
+         main = "Euclidean Sample Distances")
+```
+## Multi-Dimensional Scaling (MDS)
+
+```{r}
+library('PoiClaClu')
+# Use the raw (not r-log transformed!) counts
+dds <- assay(ddsMat)
+poisd <- PoissonDistance( t(dds) )
+# Extract the matrix with distances
+samplePoisDistMatrix <- as.matrix(poisd$dd)
+# Calculate the MDS and get the X- and Y-coordinates
+mdsPoisData <- data.frame( cmdscale(samplePoisDistMatrix) )
+
+# And set some better readable names for the columns
+names(mdsPoisData) <- c('x_coord', 'y_coord')
+
+# Separate the annotation factor (as the variable name is used as label)
+groups <- factor(rep(1:2, each=3), 
+                 labels = c("Parental", "IRF2 KO"))
+coldata <- names(ref_out)
+
+# Create the plot using ggplot
+ggplot(mdsPoisData, aes(x_coord, y_coord, color = groups, label = coldata)) + 
+  geom_text(size = 4) +
+  ggtitle('Multi Dimensional Scaling') +
+  labs(x = "Poisson Distance", y = "Poisson Distance") +
+  theme_bw()
+```
+Samples 1 & 2 as well as 3 & 4 are not that different, however there seems to be a large difference between the parental sample 5 and IRF2 KO sample 6.
+
+```{r}
+MyData
+```
+As this dataset only contains 3 samples of each group, as well as the fact the data itself does not contain any missing values, it can be fuly utilised for research. 
