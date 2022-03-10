@@ -129,6 +129,11 @@ Created a barplot displaying MultiDimensional Scaling
 
 Spent too much time adding legends to my plots.
 
+Performed Normalisation of my data
+
+Created a Heatmap
+
+Performed Multi-Dimensional Scaling
 
 ```{r}
 # boxplot(counts_p)
