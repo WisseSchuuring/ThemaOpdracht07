@@ -135,6 +135,8 @@ Created a Heatmap
 
 Performed Multi-Dimensional Scaling
 
+fixed the dataset, made a mistake in my merging. 
+
 ```{r}
 # boxplot(counts_p)
 # boxplot(counts_KO)
