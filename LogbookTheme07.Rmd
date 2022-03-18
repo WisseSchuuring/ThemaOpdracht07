@@ -165,3 +165,9 @@ boxplot(log2(ref_out + 1),
                 "Knockout 2", "Knockout 3"))
 
 ```
+
+Week 4
+
+Began pre processing by removing all 0 values
+
+
