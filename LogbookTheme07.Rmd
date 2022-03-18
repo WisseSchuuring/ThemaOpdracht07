@@ -170,4 +170,6 @@ Week 4
 
 Began pre processing by removing all 0 values
 
+created a plot using only the genes used.
+
 
