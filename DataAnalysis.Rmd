@@ -14,6 +14,7 @@ library(PoiClaClu)
 library(affy)
 library(scales)
 library(pheatmap)
+library(DESeq2)
 
 ```
 
@@ -58,7 +59,7 @@ final_merge_parental <- merge(first_merge_parental, s5p, by="ID_REF")
 names(final_merge_parental)[2] <- c("counts_1_p")
 names(final_merge_parental)[3] <- c("counts_4_p")
 names(final_merge_parental)[4] <- c("counts_5_p")
-final_merge_parental$counts_total_p <- rowSums(final_merge_parental[2:4])
+final_merge_parental$counts_avg_p <- rowMeans(final_merge_parental[2:4])
 
 
 # Merge the IRF2KO data
@@ -67,7 +68,7 @@ final_merge_IRF2KO <- merge(first_merge_IRF2KO, s6k, by="ID_REF")
 names(final_merge_IRF2KO)[2] <- c("counts_2_KO")
 names(final_merge_IRF2KO)[3] <- c("counts_3_KO")
 names(final_merge_IRF2KO)[4] <- c("counts_6_KO")
-final_merge_IRF2KO$counts_total_KO <- rowSums(final_merge_IRF2KO[2:4])
+final_merge_IRF2KO$counts_avg_KO <- rowMeans(final_merge_IRF2KO[2:4])
 
 
 # Merge both datasets into a completed dataset
@@ -75,6 +76,7 @@ MyData <- merge(final_merge_parental, final_merge_IRF2KO, by="ID_REF")
 
 # Write the merged dataset to a seperate file " MyData.csv".
 write.csv(MyData,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
+MyData
 
 ```
 
@@ -85,7 +87,7 @@ With the data finally cleaned up, a simple read.table() shall reveal its content
 ```{r}
 # Reading the first five rows of MyData.csv file into R as a table.
 read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
-           header=T, nrows = 5)
+           header=T, row.names=1, nrows = 5)
 ```
 
 ## Data Dimensions
@@ -113,7 +115,7 @@ cat("All values within the data set are integers,
 # create R objects to store classification
 counts_p <- 2:4
 counts_KO <- 6:8
-counts_total <- c(5,9)
+counts_avg <- c(5,9)
 compare_1_2 <- c(2,6)
 compare_4_3 <- c(3,7)
 compare_5_6 <- c(4,8)
@@ -177,7 +179,6 @@ barplot(colSums(ref_out) / 1e6, las = 2,
 ```
 
 ```{r}
-library('DESeq2')
 
 # DESeq2 will construct a SummarizedExperiment object and combine this 
 # into a 'DESeqDataSet' object. The 'design' argument usually indicates the 
@@ -252,15 +253,36 @@ There is a clear poisson distance between the parental and the IRF2 KO gene samp
 # Discovering Differentialy Expressed Genes
 
 ```{r}
-# Perform FPM normalization using DESeq2 'fpm' and perform log2 transformation
-# The 'ddsMat' object is the 'DESeqDataSet' created in chapter 3; EDA.
-# NOTE: only for count data and observe the pseudocount of 1 (remove if data does not contain 0-values)
-counts.fpm <- log2( fpm(ddsMat, robust = TRUE) + 1 )
 
+MyData <- read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
+           header=T, row.names=1)
+
+# Perform a naive FPM normalization
+# Note: log transformation includes a pseudocount of 1
+
+counts.fpm <- log2( (MyData / (colSums(MyData) / 1e6)) + 1 )
+
+#if three have values of zero, remove them
+row_sub <- apply(counts.fpm, 1, function(row) all(row !=0 ))
+row_removed <- apply(counts.fpm, 1, function(row) any(row == 0))
+
+# Show the identifiers of the genes that were removed due to containing 0 values
+removed_genes <- counts.fpm[row_removed,][0]
+
+# Show the remaining genes and their count values
+genes <- counts.fpm[row_sub,]
+  
 ```
+
+# The Fold Change Value (FC)
 
 "Differential expression analysis was performed using the voom/limma R package
 (38). Genes were considered to be differentially expressed if the log2
 of the fold change was >1 or < 1 and the adjusted P value was <0.05"
+
+```{r}
+gene_avg <- genes[c(4,8)]
+```
+
 
 
