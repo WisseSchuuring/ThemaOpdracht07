@@ -5,7 +5,7 @@ date: "2/15/2022"
 output: pdf_document
 ---
 
-```{r setup, include=FALSE}
+```{r setup, message=FALSE}
 
 library(ggplot2)
 library(dplyr)
@@ -15,6 +15,7 @@ library(affy)
 library(scales)
 library(pheatmap)
 library(DESeq2)
+library(pander)
 
 ```
 
@@ -76,7 +77,6 @@ MyData <- merge(final_merge_parental, final_merge_IRF2KO, by="ID_REF")
 
 # Write the merged dataset to a seperate file " MyData.csv".
 write.csv(MyData,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
-MyData
 
 ```
 
@@ -104,7 +104,7 @@ cat("The data set contains", Dimensions[1],
     "rows and",Dimensions[2],"columns.\n")
 
 #Show the structure of the data set.
-str(MyData)
+pander(str(MyData))
 cat("All values within the data set are integers,
     as expected from a numeric value such as a count.\n")
 ```
@@ -129,7 +129,7 @@ Six R objects are created. The counts objects to keep track of individual counts
 
 ```{r}
 # Summarise the Data
-summary(MyData)
+pander(summary(MyData))
 
 # Create a boxplot displaying the logged data of the six samples.
 boxplot(log2(ref_out + 1),
@@ -171,6 +171,7 @@ Considering there are barely to no shifts between the peaks of the different sam
 ## Created a boxplot using MDS
 barplot(colSums(ref_out) / 1e6, las = 2,
         col=rep(myColors, each=3),
+        main = "Sequencing Depth",
         xlab = "Gene Samples",
         ylab = "Sequencing Depth (in millions)",
         names=c("Parent 1","Parent 2","Parent 3",
@@ -182,7 +183,8 @@ barplot(colSums(ref_out) / 1e6, las = 2,
 
 # DESeq2 will construct a SummarizedExperiment object and combine this 
 # into a 'DESeqDataSet' object. The 'design' argument usually indicates the 
-# experimental design using the condition(s) names as a 'factor', for now we use just '~ 1'
+# experimental design using the condition(s) names as a 'factor',
+# for now we use just '~ 1'
 (ddsMat <- DESeqDataSetFromMatrix(countData = ref_out,
                                   colData = data.frame(samples = names(ref_out)),
                                   design = ~ 1))
@@ -220,7 +222,7 @@ pheatmap(sampleDistMatrix, show_colnames = FALSE,
          annotation_col = annotation,
          clustering_distance_rows = sampledists,
          clustering_distance_cols = sampledists,
-         main = "Euclidean Sample Distances")
+         main = "IRF2 Knockout Sample Distances")
 ```
 ## Multi Dimensional Scaling (MDS)
 
@@ -252,6 +254,10 @@ There is a clear poisson distance between the parental and the IRF2 KO gene samp
 
 # Discovering Differentialy Expressed Genes
 
+FILTER OUT LOW COUNT DATA
+
+
+
 ```{r}
 
 MyData <- read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
@@ -263,16 +269,29 @@ MyData <- read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
 counts.fpm <- log2( (MyData / (colSums(MyData) / 1e6)) + 1 )
 
 #if three have values of zero, remove them
-row_sub <- apply(counts.fpm, 1, function(row) all(row !=0 ))
-row_removed <- apply(counts.fpm, 1, function(row) any(row == 0))
+row_sub <- apply(counts.fpm, 1, function(row) all(row > 1 ))
+row_removed <- apply(counts.fpm, 1, function(row) any(row < 1))
 
 # Show the identifiers of the genes that were removed due to containing 0 values
-removed_genes <- counts.fpm[row_removed,][0]
+removed_genes <- counts.fpm[row_removed,]
 
 # Show the remaining genes and their count values
 genes <- counts.fpm[row_sub,]
+
+totalAmount <- dplyr::count(MyData)[[1]]
+keepAmount <- dplyr::count(genes)[[1]]
+removeAmount <- dplyr::count(removed_genes)[[1]]
+
+keepPercent <- round((keepAmount*100)/totalAmount)
+removedPercent <- round((removeAmount*100)/totalAmount)
+
+cat("The total amount of genes in the data is",totalAmount,". Of those genes,",keepAmount,
+    " were above a count of one, with",removeAmount," below. In conclusion,",keepPercent,
+    "% of the data will be kept, while",removedPercent,"% will be removed.")
   
 ```
+
+CALCULATE THE FOLD CHANGE VALUE
 
 # The Fold Change Value (FC)
 
@@ -282,6 +301,13 @@ of the fold change was >1 or < 1 and the adjusted P value was <0.05"
 
 ```{r}
 gene_avg <- genes[c(4,8)]
+avg.fpm <- log2( (gene_avg / (colSums(MyData) / 1e6)) + 1 )
+avg.fpm
+p1 <- hist(avg.fpm$counts_avg_p, col="Orange")
+p2 <- hist(avg.fpm$counts_avg_KO, col="Blue")
+plot( p1, col=rgb(1,0.5,0,1/1.8), main = "Fold Change Values Frequencies")
+plot( p2, col=rgb(0,0,1,1/1.8), add=T)
+legend(8, 2500, legend = c("Parental","Knockout"), fill = c("Orange","Blue"))
 ```
 
 
