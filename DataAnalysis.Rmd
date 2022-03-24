@@ -263,14 +263,15 @@ FILTER OUT LOW COUNT DATA
 MyData <- read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
            header=T, row.names=1)
 
+MyData <- MyData[,c(1:3,5:7)]
 # Perform a naive FPM normalization
 # Note: log transformation includes a pseudocount of 1
 
 counts.fpm <- log2( (MyData / (colSums(MyData) / 1e6)) + 1 )
 
-#if three have values of zero, remove them
-row_sub <- apply(counts.fpm, 1, function(row) all(row > 1 ))
-row_removed <- apply(counts.fpm, 1, function(row) any(row < 1))
+#if ever value of a row have values of zero, remove them
+row_sub <- apply(counts.fpm, 1, function(row) all(row > 5 ))
+row_removed <- apply(counts.fpm, 1, function(row) any(row <= 5))
 
 # Show the identifiers of the genes that were removed due to containing 0 values
 removed_genes <- counts.fpm[row_removed,]
@@ -285,8 +286,10 @@ removeAmount <- dplyr::count(removed_genes)[[1]]
 keepPercent <- round((keepAmount*100)/totalAmount)
 removedPercent <- round((removeAmount*100)/totalAmount)
 
-cat("The total amount of genes in the data is",totalAmount,". Of those genes,",keepAmount,
-    " were above a count of one, with",removeAmount," below. In conclusion,",keepPercent,
+cat("The total amount of genes in the data is",totalAmount,
+    ". Of those genes,",keepAmount,
+    " were above a count of zero, with",removeAmount,
+    " equal to it or below. In conclusion,",keepPercent,
     "% of the data will be kept, while",removedPercent,"% will be removed.")
   
 ```
@@ -300,14 +303,25 @@ CALCULATE THE FOLD CHANGE VALUE
 of the fold change was >1 or < 1 and the adjusted P value was <0.05"
 
 ```{r}
-gene_avg <- genes[c(4,8)]
-avg.fpm <- log2( (gene_avg / (colSums(MyData) / 1e6)) + 1 )
-avg.fpm
-p1 <- hist(avg.fpm$counts_avg_p, col="Orange")
-p2 <- hist(avg.fpm$counts_avg_KO, col="Blue")
-plot( p1, col=rgb(1,0.5,0,1/1.8), main = "Fold Change Values Frequencies")
-plot( p2, col=rgb(0,0,1,1/1.8), add=T)
-legend(8, 2500, legend = c("Parental","Knockout"), fill = c("Orange","Blue"))
+# gene_avg <- MyData[c(4,8)]
+# avg.fpm <- log2( (gene_avg / (colSums(MyData) / 1e6)) + 1 )
+# avg.fpm
+# p1 <- hist(avg.fpm$counts_avg_p, col="Orange")
+# p2 <- hist(avg.fpm$counts_avg_KO, col="Blue")
+# plot( p1, col=rgb(1,0.5,0,1/1.8), main = "Fold Change Values Frequencies")
+# plot( p2, col=rgb(0,0,1,1/1.8), add=T)
+# legend(8, 2500, legend = c("Parental","Knockout"), fill = c("Orange","Blue"))
+
+myTTest <- function(y){
+  return(t.test(y[1:3], y[4:6])$p.value)
+}
+gene.names <- rownames(genes)
+samples <- colnames(genes)
+
+pVec <- apply(genes, 1, myTTest)
+alpha <- 0.05
+sum(pVec < alpha)
+
 ```
 
 
