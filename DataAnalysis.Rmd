@@ -309,8 +309,6 @@ samples <- colnames(genes)
 pVec <- apply(genes, 1, myTTest)
 alpha <- 0.05
 
- 
-DEGData <- MyData[gene.names[pVec < alpha],]
 cat("Number of DEGs:\n")
 ( n.DEG <- sum(pVec < alpha) )
 ```
@@ -318,18 +316,12 @@ cat("Number of DEGs:\n")
 
 
 ```{r}
-DEGData$avg_p <- rowMeans(DEGData[1:3])
-DEGData$avg_KO <- rowMeans(DEGData[4:6])
+genes$avg_p <- rowMeans(genes[1:3])
+genes$avg_KO <- rowMeans(genes[4:6])
+
+genes$foldChange <- genes[8] - genes[7]
 
 
-DEG_avg <- DEGData[c(7,8)]
-avg.fpm <- log2( (DEG_avg / (colSums(DEGData) / 1e6)) + 1 )
-avg.fpm
-p1 <- hist(avg.fpm$avg_p, col="Orange")
-p2 <- hist(avg.fpm$avg_KO, col="Blue")
-plot( p1, col=rgb(1,0.5,0,1/1.8), main = "Fold Change Values Frequencies")
-plot( p2, col=rgb(0,0,1,1/1.8), add=T)
-legend(8, 2500, legend = c("Parental","Knockout"), fill = c("Orange","Blue"))
 ```
 ```
 
