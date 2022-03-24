@@ -174,6 +174,21 @@ created a plot using only the genes used.
 
 week 5
 
+```{r}
+# gene_avg <- MyData[c(4,8)]
+# avg.fpm <- log2( (gene_avg / (colSums(MyData) / 1e6)) + 1 )
+# avg.fpm
+# p1 <- hist(avg.fpm$counts_avg_p, col="Orange")
+# p2 <- hist(avg.fpm$counts_avg_KO, col="Blue")
+# plot( p1, col=rgb(1,0.5,0,1/1.8), main = "Fold Change Values Frequencies")
+# plot( p2, col=rgb(0,0,1,1/1.8), add=T)
+# legend(8, 2500, legend = c("Parental","Knockout"), fill = c("Orange","Blue"))
+```
 
+Succesfully calculated DEG's. 
+
+Created a dataset to hold the DEGs.
+
+Calculated the average value of the DEG counts, logged them, and created a plot to show their differences.
 
 
