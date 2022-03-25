@@ -283,9 +283,9 @@ keepPercent <- round((keepAmount*100)/totalAmount)
 removedPercent <- round((removeAmount*100)/totalAmount)
 
 cat("The total amount of genes in the data is",totalAmount,
-    ". Of those genes,",keepAmount,
-    " were above a count of zero, with",removeAmount,
-    " equal to it or below. In conclusion,",keepPercent,
+    ".\n Of those genes,",keepAmount,
+    " were above a count of zero,\n with",removeAmount,
+    " equal to it or below. In conclusion,\n",keepPercent,
     "% of the data will be kept, while",removedPercent,"% will be removed.")
   
 ```
@@ -299,16 +299,20 @@ CALCULATE THE FOLD CHANGE VALUE
 of the fold change was >1 or < 1 and the adjusted P value was <0.05"
 
 ```{r}
-
+# Create a function that performs a t.test per row in a data frame.
 myTTest <- function(y){
   return(t.test(y[1:3], y[4:6])$p.value)
 }
+
+# assign the row and column names
 gene.names <- rownames(genes)
 samples <- colnames(genes)
 
+# Apply the function to the logged data set.
 pVec <- apply(genes, 1, myTTest)
 alpha <- 0.05
 
+#Show how many DEGs have been found.
 cat("Number of DEGs:\n")
 ( n.DEG <- sum(pVec < alpha) )
 ```
@@ -316,13 +320,19 @@ cat("Number of DEGs:\n")
 
 
 ```{r}
+# Create two columns, one with means of parental and one with Knockout.
 genes$avg_p <- rowMeans(genes[1:3])
 genes$avg_KO <- rowMeans(genes[4:6])
 
+# Calculate the FC values.
 genes$foldChange <- genes[8] - genes[7]
 
-
+# Display the values as a histogram.
+hist(as.matrix(genes$foldChange), breaks=80, main="Fold Change Value of the Gene Counts", xlab="FC value", col= rgb(0.5,0,0.8,1/2))
+abline(v = c(-1,1), col="red")
 ```
+```{r}
+
 ```
 
 
