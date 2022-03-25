@@ -191,4 +191,8 @@ Created a dataset to hold the DEGs.
 
 Calculated the average value of the DEG counts, logged them, and created a plot to show their differences.
 
+Created a histogram that shows the FC Value of the log transformed data.
+
+Began using the limma package for Differential Expression
+
 
