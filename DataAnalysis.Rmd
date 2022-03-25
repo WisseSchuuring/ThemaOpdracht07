@@ -24,30 +24,30 @@ library(pander)
 
 ```{r}
 #reading in the parental sample files.
-sample_1_p <- read.csv(file = "Data/SamplesTSV/GSM3733674_sample1.tsv",
+sample1P <- read.csv(file = "Data/SamplesTSV/GSM3733674_sample1.tsv",
                        sep = "\t", header=T, skip = 3)
-sample_4_p <- read.csv(file = "Data/SamplesTSV/GSM3733677_sample4.tsv",
+sample4P <- read.csv(file = "Data/SamplesTSV/GSM3733677_sample4.tsv",
                        sep = "\t", header=T, skip = 3)
-sample_5_p <- read.csv(file = "Data/SamplesTSV/GSM3733678_sample5.tsv",
+sample5P <- read.csv(file = "Data/SamplesTSV/GSM3733678_sample5.tsv",
                        sep = "\t", header=T, skip = 3)
 
 #reading in the IRF2 knockout files.
-sample_2_KO <- read.csv(file = "Data/SamplesTSV/GSM3733675_sample2.tsv",
+sample2KO <- read.csv(file = "Data/SamplesTSV/GSM3733675_sample2.tsv",
                         sep = "\t", header=T, skip = 3)
-sample_3_KO <- read.csv(file = "Data/SamplesTSV/GSM3733676_sample3.tsv",
+sample3KO <- read.csv(file = "Data/SamplesTSV/GSM3733676_sample3.tsv",
                         sep = "\t", header=T, skip = 3)
-sample_6_KO <- read.csv(file = "Data/SamplesTSV/GSM3733679_sample6.tsv",
+sample6KO <- read.csv(file = "Data/SamplesTSV/GSM3733679_sample6.tsv",
                         sep = "\t", header=T, skip = 3)
 
 
 #removing the "values" column in both parental and knockout files.
-s1p <- sample_1_p[c("ID_REF", "count")]
-s4p <- sample_4_p[c("ID_REF", "count")]
-s5p <- sample_5_p[c("ID_REF", "count")]
+s1P <- sample1P[c("ID_REF", "count")]
+s4P <- sample4P[c("ID_REF", "count")]
+s5P <- sample5P[c("ID_REF", "count")]
 
-s2k <- sample_2_KO[c("ID_REF", "count")]
-s3k <- sample_3_KO[c("ID_REF", "count")]
-s6k <- sample_6_KO[c("ID_REF", "count")]
+s2K <- sample2KO[c("ID_REF", "count")]
+s3K <- sample3KO[c("ID_REF", "count")]
+s6K <- sample6KO[c("ID_REF", "count")]
 ```
 
 Read in the files and removed the unnecessary value value, for the only ones of interest are the id and the counts value.
@@ -55,26 +55,26 @@ Read in the files and removed the unnecessary value value, for the only ones of 
 
 ```{r}
 # Merge the parental data
-first_merge_parental <- merge(s1p, s4p, by="ID_REF")
-final_merge_parental <- merge(first_merge_parental, s5p, by="ID_REF")
-names(final_merge_parental)[2] <- c("counts_1_p")
-names(final_merge_parental)[3] <- c("counts_4_p")
-names(final_merge_parental)[4] <- c("counts_5_p")
+firstMergeP <- merge(s1P, s4P, by="ID_REF")
+finalMergeP <- merge(firstMergeP, s5P, by="ID_REF")
+names(finalMergeP)[2] <- c("counts_1_p")
+names(finalMergeP)[3] <- c("counts_4_p")
+names(finalMergeP)[4] <- c("counts_5_p")
 
 
 # Merge the IRF2KO data
-first_merge_IRF2KO <- merge(s2k, s3k, by="ID_REF")
-final_merge_IRF2KO <- merge(first_merge_IRF2KO, s6k, by="ID_REF")
-names(final_merge_IRF2KO)[2] <- c("counts_2_KO")
-names(final_merge_IRF2KO)[3] <- c("counts_3_KO")
-names(final_merge_IRF2KO)[4] <- c("counts_6_KO")
+firstMergeIRF2KO <- merge(s2K, s3K, by="ID_REF")
+finalMergeIRF2KO <- merge(firstMergeIRF2KO, s6K, by="ID_REF")
+names(finalMergeIRF2KO)[2] <- c("counts_2_KO")
+names(finalMergeIRF2KO)[3] <- c("counts_3_KO")
+names(finalMergeIRF2KO)[4] <- c("counts_6_KO")
 
 
 # Merge both datasets into a completed dataset
-MyData <- merge(final_merge_parental, final_merge_IRF2KO, by="ID_REF")
+myData <- merge(finalMergeP, finalMergeIRF2KO, by="ID_REF")
 
-# Write the merged dataset to a seperate file " MyData.csv".
-write.csv(MyData,file = 'Data/Samples/Reformat/MyData.csv', row.names=F)
+# Write the merged dataset to a seperate file " myData.csv".
+write.csv(myData,file = 'Data/Samples/Reformat/myData.csv', row.names=F)
 
 ```
 
@@ -83,8 +83,8 @@ With the data finally cleaned up, a simple read.table() shall reveal its content
 ## Reading in the Data
 
 ```{r}
-# Reading the first five rows of MyData.csv file into R as a table.
-read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
+# Reading the first five rows of myData.csv file into R as a table.
+read.table(file="Data/Samples/Reformat/myData.csv", sep=",",
            header=T, row.names=1, nrows = 5)
 ```
 
@@ -93,16 +93,16 @@ read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
 The data set contains the identifier for the gene, followed by the amount of times this gene has been expressed within it's respective sample. In addition, there are "total" columns with the sum of these counts for the IRF2 Knockout samples, and the parental samples. These can be used for comparison's sake. All of these values are integers, therefore easy to work with.
 
 ```{r}
-# Reading the data set as MyData
-MyData <- read.csv(file = "Data/Samples/Reformat/MyData.csv", header = T, row.names = 1)
+# Reading the data set as myData
+myData <- read.csv(file = "Data/Samples/Reformat/myData.csv", header = T, row.names = 1)
 
-#Show the amount of rows and columns in MyData
-Dimensions <- dim(MyData)
-cat("The data set contains", Dimensions[1],
-    "rows and",Dimensions[2],"columns.\n")
+#Show the amount of rows and columns in myData
+dimensions <- dim(myData)
+cat("The data set contains", dimensions[1],
+    "rows and",dimensions[2],"columns.\n")
 
 #Show the structure of the data set.
-pander(str(MyData))
+pander(str(myData))
 cat("All values within the data set are integers,
     as expected from a numeric value such as a count.\n")
 ```
@@ -111,12 +111,11 @@ cat("All values within the data set are integers,
 
 ```{r}
 # create R objects to store classification
-counts_p <- 1:3
-counts_KO <- 4:6
-compare_1_2 <- c(1,4)
-compare_4_3 <- c(2,5)
-compare_5_6 <- c(3,5)
-ref_out <- MyData[c(1:6)]
+countsP <- 1:3
+countsKO <- 4:6
+compare1To2 <- c(1,4)
+compare4To3 <- c(2,5)
+compare5To6 <- c(3,5)
 
 ```
 
@@ -126,11 +125,11 @@ Six R objects are created. The counts objects to keep track of individual counts
 
 ```{r}
 # Summarise the Data
-pander(summary(MyData))
+pander(summary(myData))
 
 # Create a boxplot displaying the logged data of the six samples.
-boxplot(log2(ref_out + 1),
-        data=MyData, main="Gene expression between Parental and IRF2 KO",
+boxplot(log2(myData + 1),
+        data=myData, main="Gene expression between Parental and IRF2 KO",
         xlab="Gene Samples",
         ylab="Log of Gene expressions",
         col = c("orange","orange",
@@ -151,12 +150,12 @@ A summary shows that most data points do indeed equal zero. The following boxplo
 myColors <- c("Orange","dark Blue")
 
 ## Plot the log2-transformed data with a 0.1 pseudocount
-plotDensity(log2(ref_out + 0.1), col=rep(myColors, each=3),
-            lty=c(1:ncol(ref_out)), xlab='Log2(count)',
+plotDensity(log2(myData + 0.1), col=rep(myColors, each=3),
+            lty=c(1:ncol(myData)), xlab='Log2(count)',
             main='Expression Distribution')
 
 ## Add a legend and vertical line
-legend('topright', names(ref_out), lty=c(1:ncol(ref_out)),
+legend('topright', names(myData), lty=c(1:ncol(myData)),
        col=rep(myColors, each=3))
 abline(v=-1.5, lwd=1, col='red', lty=2)
 ```
@@ -166,7 +165,7 @@ Considering there are barely to no shifts between the peaks of the different sam
 
 ```{r}
 ## Created a boxplot using MDS
-barplot(colSums(ref_out) / 1e6, las = 2,
+barplot(colSums(myData) / 1e6, las = 2,
         col=rep(myColors, each=3),
         main = "Sequencing Depth",
         xlab = "Gene Samples",
@@ -182,8 +181,8 @@ barplot(colSums(ref_out) / 1e6, las = 2,
 # into a 'DESeqDataSet' object. The 'design' argument usually indicates the 
 # experimental design using the condition(s) names as a 'factor',
 # for now we use just '~ 1'
-(ddsMat <- DESeqDataSetFromMatrix(countData = ref_out,
-                                  colData = data.frame(samples = names(ref_out)),
+(ddsMat <- DESeqDataSetFromMatrix(countData = myData,
+                                  colData = data.frame(samples = names(myData)),
                                   design = ~ 1))
 ```
 ```{r}
@@ -213,7 +212,7 @@ annotation <- data.frame(Cell = factor(rep(1:2, each = 3),
                                           labels = c("Parental", "IRF2 KO")))
 
 # Set the rownames of the annotation dataframe to the sample names (required)
-rownames(annotation) <- names(ref_out)
+rownames(annotation) <- names(myData)
 
 pheatmap(sampleDistMatrix, show_colnames = FALSE,
          annotation_col = annotation,
@@ -238,7 +237,7 @@ names(mdsPoisData) <- c('x_coord', 'y_coord')
 # Separate the annotation factor (as the variable name is used as label)
 groups <- factor(rep(1:2, each=3), 
                  labels = c("Parental", "IRF2 KO"))
-coldata <- names(ref_out)
+coldata <- names(myData)
 
 # Create the plot using ggplot
 ggplot(mdsPoisData, aes(x_coord, y_coord, color = groups, label = coldata)) + 
@@ -257,13 +256,13 @@ FILTER OUT LOW COUNT DATA
 
 ```{r}
 
-MyData <- read.table(file="Data/Samples/Reformat/MyData.csv", sep=",",
+myData <- read.table(file="Data/Samples/Reformat/myData.csv", sep=",",
            header=T, row.names=1)
 
 # Perform a naive FPM normalization
 # Note: log transformation includes a pseudocount of 1
 
-counts.fpm <- log2( (MyData / (colSums(MyData) / 1e6)) + 1 )
+counts.fpm <- log2( (myData / (colSums(myData) / 1e6)) + 1 )
 
 #if ever value of a row have values of zero, remove them
 row_sub <- apply(counts.fpm, 1, function(row) all(row > 5 ))
@@ -275,7 +274,7 @@ removed_genes <- counts.fpm[row_removed,]
 # Show the remaining genes and their count values
 genes <- counts.fpm[row_sub,]
 
-totalAmount <- dplyr::count(MyData)[[1]]
+totalAmount <- dplyr::count(myData)[[1]]
 keepAmount <- dplyr::count(genes)[[1]]
 removeAmount <- dplyr::count(removed_genes)[[1]]
 
@@ -294,9 +293,6 @@ CALCULATE THE FOLD CHANGE VALUE
 
 # The Fold Change Value (FC)
 
-"Differential expression analysis was performed using the voom/limma R package
-(38). Genes were considered to be differentially expressed if the log2
-of the fold change was >1 or < 1 and the adjusted P value was <0.05"
 
 ```{r}
 # Create a function that performs a t.test per row in a data frame.
@@ -331,8 +327,14 @@ genes$foldChange <- genes[8] - genes[7]
 hist(as.matrix(genes$foldChange), breaks=80, main="Fold Change Value of the Gene Counts", xlab="FC value", col= rgb(0.5,0,0.8,1/2))
 abline(v = c(-1,1), col="red")
 ```
-```{r}
+# Using Bioconductor Packages
 
+"Differential expression analysis was performed using the voom/limma R package
+(38). Genes were considered to be differentially expressed if the log2
+of the fold change was >1 or < 1 and the adjusted P value was <0.05"
+
+```{r}
+myData
 ```
 
 
