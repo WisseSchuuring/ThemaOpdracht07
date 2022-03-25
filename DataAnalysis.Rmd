@@ -208,7 +208,7 @@ sampledists <- dist( t( rld ))
 
 # The annotation is an extra layer that will be plotted above the heatmap columns
 # indicating the cell type
-annotation <- data.frame(Cell = factor(rep(1:2, each = 3),
+annotation <- data.frame(Type = factor(rep(1:2, each = 3),
                                           labels = c("Parental", "IRF2 KO")))
 
 # Set the rownames of the annotation dataframe to the sample names (required)
@@ -264,7 +264,7 @@ myData <- read.table(file="Data/Samples/Reformat/myData.csv", sep=",",
 
 counts.fpm <- log2( (myData / (colSums(myData) / 1e6)) + 1 )
 
-#if ever value of a row have values of zero, remove them
+#if ever value of a row have values of below five, remove them
 row_sub <- apply(counts.fpm, 1, function(row) all(row > 5 ))
 row_removed <- apply(counts.fpm, 1, function(row) any(row <= 5))
 
@@ -333,9 +333,94 @@ abline(v = c(-1,1), col="red")
 (38). Genes were considered to be differentially expressed if the log2
 of the fold change was >1 or < 1 and the adjusted P value was <0.05"
 
+
+## Limma package
+
 ```{r}
-myData
+library(edgeR)
+
+# Read in the file containing the count data.
+counts <- read.csv("Data/Samples/Reformat/myData.csv", row.names = 1)
+head(counts)
+
+# Create DEGList object
+d0 <- DGEList(counts)
+
+#Calculate normalization factors
+d0 <- calcNormFactors(d0)
+d0
+```
+
+```{r}
+
+# Filter low-expressed genes
+cutoff <- 5
+drop <- which(apply(cpm(d0), 1, max) < cutoff)
+d <- d0[-drop,] 
+
+dim(d) # number of genes left
+```
+
+```{r}
+# Multidimensional scaling (MDS) plot
+group <- factor(c(1,1,1,2,2,2), labels = c("Control", "Case"))
+plotMDS(d, col = as.numeric(group))
+```
+```{r}
+# Voom transformation and calculation of variance weights.
+# Specify the model to be fitted. We do this before using voom since voom uses variances of the model residuals (observed - fitted)
+mm <- model.matrix(~0 + group)
+
+y <- voom(d, mm, plot = T)
+```
+1. Counts are transformed to log2 counts per million reads (CPM),
+where “per million reads” is defined based on the normalization
+factors we calculated earlier
+
+2. A linear model is fitted to the log2 CPM for each gene,
+and the residuals are calculated
+
+3. A smoothed curve is fitted to the
+sqrt(residual standard deviation) by average expression
+(see red line in plot above)
+
+4. The smoothed curve is used to obtain weights for each gene
+and sample that are passed into limma along with the log2 CPMs.
+
+```{r}
+# Fitting linear models in limma
+
+fit <- lmFit(y, mm)
+head(coef(fit))
+
+# Comparison between control (parental) and case (KO)
+contr <- makeContrasts(groupCase - groupControl, levels = colnames(coef(fit)))
+contr
+
+# Estimate contrast for each gene
+tmp <- contrasts.fit(fit, contr)
+
+# Empirical Bayes smoothing of standard errors 
+tmp <- eBayes(tmp)
+
+# What genes are most differentially expressed?
+top.table <- topTable(tmp, sort.by = "P", n = Inf)
+head(top.table, 20)
+```
+logFC: log2 fold change of Control/Case
+AveExpr: Average expression across all samples, in log2 CPM
+t: logFC divided by its standard error
+P.Value: Raw p-value (based on t) from test that logFC differs from 0
+adj.P.Val: Benjamini-Hochberg false discovery rate adjusted p-value
+B: log-odds that gene is DE (arguably less useful than the other columns)
+
+```{r}
+cat("Number of DEGs:\n")
+cat(length(which(top.table$adj.P.Val < 0.05)))
 ```
 
 
+```{r}
+
+```
 
