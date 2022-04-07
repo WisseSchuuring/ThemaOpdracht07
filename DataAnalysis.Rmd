@@ -454,6 +454,7 @@ deseq.volcano(res = top.table, datasetName = "top")
 ```{r}
 
 y <- DGEList(genes[1:6], group = c(1,1,1,2,2,2))
+
 y <- calcNormFactors(y)
 
 y <- estimateDisp(y)
@@ -464,7 +465,8 @@ y <- estimateTagwiseDisp(y)
 
 et <- exactTest(y)
 tt <- topTags(et, n = Inf)
-edgeR.gene.ids <- rownames(tt)
+
+edgeR.gene.ids <- rownames(tt$table)
 
 ```
 
