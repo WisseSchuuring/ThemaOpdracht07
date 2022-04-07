@@ -195,4 +195,18 @@ Created a histogram that shows the FC Value of the log transformed data.
 
 Began using the limma package for Differential Expression
 
+Week 6:
 
+Attempted to use DESeq2 for fc calculations
+
+Attempted to use EdgeR for calculations.
+
+settled on Limma only, applied article limitations. 
+
+week 7: 
+
+Created volcano plot displaying DEG's in limma top table data.
+
+week 8: 
+
+Created Venn diagram after many iterations.
