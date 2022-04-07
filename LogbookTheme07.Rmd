@@ -210,3 +210,5 @@ Created volcano plot displaying DEG's in limma top table data.
 week 8: 
 
 Created Venn diagram after many iterations.
+
+added figure caps to all figures made in the Data Analysis.
