@@ -466,7 +466,8 @@ y <- estimateTagwiseDisp(y)
 et <- exactTest(y)
 tt <- topTags(et, n = Inf)
 
-edgeR.gene.ids <- row.names(tt$table)[which(abs(tt$table$logFC) > 1 & tt$table$adj.P.Val < 0.05)]
+edgeR.gene.ids <- row.names(tt$table)[which(abs(tt$table$logFC) > 1 & tt$table$FDR < 0.05)]
+
 
 ```
 
