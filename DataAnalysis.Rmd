@@ -458,14 +458,14 @@ deseq.volcano <- function(res, datasetName) {
   return(EnhancedVolcano(res, x = 'logFC', y = 'adj.P.Val',
                          lab=rownames(res),
                          title = paste(datasetName, "Parental vs Knockout"),
-                         subtitle = bquote(italic('adj.P.Val <= 0.05 and absolute FC >= 2')),
+                         subtitle = bquote(italic('adj.P.Val <= 0.05 and absolute FC >= 1')),
                          # Change text and icon sizes
                          labSize = 3, pointSize = 1.5, axisLabSize=10, titleLabSize=12,
                          subtitleLabSize=8, captionLabSize=10,
                          # Disable legend
                          legendPosition = "none",
                          # Set cutoffs
-                         pCutoff = 0.05, FCcutoff = 2))
+                         pCutoff = 0.05, FCcutoff = 1))
 }
 
 ## Note: input data is the corrected DESeq2 output using the 'lfcShrink' function (see chapter 4)
