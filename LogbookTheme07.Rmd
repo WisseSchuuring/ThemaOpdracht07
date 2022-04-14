@@ -212,3 +212,11 @@ week 8:
 Created Venn diagram after many iterations.
 
 added figure caps to all figures made in the Data Analysis.
+
+Created a poster and presented it, showcasing the goal of the original research, as well as my own.
+
+week 9:
+
+Made some final adjustments to the Data Analysis Rmd file.
+
+Made the final knitted product presentable. 
