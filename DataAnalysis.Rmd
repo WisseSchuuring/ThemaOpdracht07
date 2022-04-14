@@ -20,6 +20,7 @@ library(DESeq2)
 library(pander)
 library(edgeR)
 library(VennDiagram)
+library(EnhancedVolcano)
 ```
 
 
@@ -328,7 +329,10 @@ genes$avg_KO <- rowMeans(genes[4:6])
 genes$foldChange <- (genes$avg_KO - genes$avg_p)
 
 # Display the values as a histogram.
-hist(as.matrix(genes$foldChange), breaks=80, main="Fold Change Value of the Gene Counts", xlab="FC value", col= rgb(0.5,0,0.8,1/2))
+hist(as.matrix(genes$foldChange), breaks=80,
+     main="Fold Change Value of the Gene Counts", xlab="FC value",
+     col= rgb(0.5,0,0.8,1/2))
+
 abline(v = c(-1,1), col="red")
 ```
 
@@ -377,7 +381,6 @@ plotMDS(d, col = as.numeric(group))
 
 ```{r, fig.cap="An MA plot revealing the differences between measurements taken in the test vs control case, by transforming the data onto M (log ratio) and A (mean average) scales, then plotting these values."}
 # Voom transformation and calculation of variance weights.
-# Specify the model to be fitted. We do this before using voom since voom uses variances of the model residuals (observed - fitted)
 mm <- model.matrix(~0 + group)
 
 y <- voom(d, mm, plot = T)
@@ -441,7 +444,9 @@ cat(length(which(top.table$logFC < -1 | top.table$logFC > 1)))
 
 ```{r, fig.cap= "barplot showing the frequency of FC values within the normalised data of limma, with those beyond the red lines to be considered DEGs."}
 # Display the values as a histogram.
-hist(as.matrix(top.table$logFC), breaks=80, main="Fold Change Value of the Gene Counts", xlab="FC value", col= rgb(0.5,0,0.8,1/2))
+hist(as.matrix(top.table$logFC), breaks=80,
+     main="Fold Change Value of the Gene Counts",
+     xlab="FC value", col= rgb(0.5,0,0.8,1/2))
 abline(v = c(-1,1), col="red")
 ```
 
@@ -451,9 +456,6 @@ abline(v = c(-1,1), col="red")
 ## Volcano plot
 
 ```{r, fig.cap="A volcano plot displaying the gene id's of the normalised count data with an absolute FCvalue of >= 2 and an adjusted P value <= 0.05"}
-library(EnhancedVolcano)
-
-
 
 ## Simple function for plotting a Volcano plot, returns a ggplot object
 deseq.volcano <- function(res, datasetName) {
@@ -462,15 +464,14 @@ deseq.volcano <- function(res, datasetName) {
                          title = paste(datasetName, "Parental vs Knockout"),
                          subtitle = bquote(italic('adj.P.Val <= 0.05 and absolute FC >= 1')),
                          # Change text and icon sizes
-                         labSize = 3, pointSize = 1.5, axisLabSize=10, titleLabSize=12,
-                         subtitleLabSize=8, captionLabSize=10,
+                         labSize = 3, pointSize = 1.5, axisLabSize=10,
+                         titleLabSize=12, subtitleLabSize=8, captionLabSize=10,
                          # Disable legend
                          legendPosition = "none",
                          # Set cutoffs
                          pCutoff = 0.05, FCcutoff = 1))
 }
 
-## Note: input data is the corrected DESeq2 output using the 'lfcShrink' function (see chapter 4)
 deseq.volcano(res = top.table, datasetName = "top")
 ```
 
